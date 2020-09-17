@@ -1,56 +1,40 @@
 #include <cmath>
 #include <cstdio>
-#include <map>
 #include <vector>
 #include <iostream>
 #include <algorithm>
 using namespace std;
-typedef long long ll;
 
-ll div(ll n, vector<int> &ps){
-    map<int, int> m;
-    int i=0;
-    while(n>1 && i < ps.size()){
-        if(n%ps[i] == 0){
-            m[ps[i]]++;
-            n /= ps[i];
-        }else{
-            i++;
-        }
+int g[20][20];
+int comp(int x, int y){
+    int m = 0;
+    if(y+3<20){
+        m = max(m, g[x][y]*g[x][y+1]*g[x][y+2]*g[x][y+3]);
     }
-    ll ans = 1;
-    for(map<int, int>::iterator it=m.begin();it!=m.end();it++){
-        ans *= (it->second+1);
+    if(x+3<20){
+        m = max(m, g[x][y]*g[x+1][y]*g[x+2][y]*g[x+3][y]);
     }
-    return ans;
+    if(x+3 < 20 && y+3 <20){
+        m = max(m, g[x][y]*g[x+1][y+1]*g[x+2][y+2]*g[x+3][y+3]);
+    }
+    if(x+3 < 20 && y-3 >=0){
+        m = max(m, g[x][y]*g[x+1][y-1]*g[x+2][y-2]*g[x+3][y-3]);
+    }
+    return m;
 }
 int main() {
-    vector<int> prs(1000, 1);
-    prs[0]=prs[1]=0;
-    for(int i=2;i*i<=1000;i++){
-        if(!prs[i])continue;
-        for(int j=i*i;j<1000;j+=i){
-            prs[j] = 0;
+    
+    for(int i=0;i<20;i++){
+        for(int j=0;j<20;j++){
+           cin >>  g[i][j];
         }
     }
-    vector<int> ps;
-    for(int i=2;i<1000;i++){
-        if(prs[i]) ps.push_back(i);
-    }
-    //for(int i=0;i<ps.size();i++)cout<<ps[i]<<" ";
-    int t;cin>>t;
-    while(t--){
-        int n; cin >> n;
-        int i = 1;
-        ll num = 1;
-        while(true){
-            i++;
-            num = (i*(i+1))/2;
-            if(div(num, ps)>n){
-                cout << num<<endl;
-                break;
-            }
+    int m = 0;
+    for(int i=0;i<20;i++){
+        for(int j=0;j<20;j++){
+            m = max(m, comp(i, j));
         }
     }
+    cout << m;
     return 0;
 }
